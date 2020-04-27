@@ -8,21 +8,24 @@
 </head>
 
 <body>
-    <p>
-        我是第一个分支
-        <span>
-            合并代码的时候我的手好抖
-        </span>
-        我是第二个分支呀哈哈
-我是第二个分支呀哈哈
-    </p>
-    <div>
-        <p>
-            <span>
-                哈哈哈11111
-            </span>
-        </p>
-    </div>
+   <script>
+        // 获取发货数据
+    outReceiptNew() {
+      let params = {
+        formId: "0",
+        status:'30'
+      };
+      outReceiptNew(params).then(res => {
+        let data = res.data.data.items;
+        this.natureOptions = data.map(item => {
+          return {
+            label: item.no,
+            value: item.id
+          };
+        });
+      });
+    },
+   </script>
 </body>
 
 </html>
