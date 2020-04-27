@@ -11,24 +11,6 @@
     <p>
         我是第一个分支
     </p>
-   <script>
-        // 获取发货数据
-    outReceiptNew() {
-      let params = {
-        formId: "0",
-        status:'30'
-      };
-      outReceiptNew(params).then(res => {
-        let data = res.data.data.items;
-        this.natureOptions = data.map(item => {
-          return {
-            label: item.no,
-            value: item.id
-          };
-        });
-      });
-    },
-   </script>
 </body>
 
 </html>
