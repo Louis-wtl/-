@@ -8,9 +8,124 @@
 </head>
 
 <body>
-    <p>
-        我是第一个分支
-    </p>
+    <template>
+        <div class="monitor-layer">
+          <div class="monitor">
+            <monitor-header />
+            <div class="section tp-states divided" style="position: relative">
+              <div class="section-hd">
+                <h3 class="section-hd__title"><i class="mdi mdi-access-point-network"/>TP States</h3>
+              </div>
+              <div class="section-bd">
+                <line-map ref="lineMap" style="height: 100%;  width:100%;"/>
+              </div>
+    
+            </div>
+            <div class="row">
+              <div class="section chamber">
+                <div class="section-hd">
+                  <h3 class="section-hd__title"><i class="mdi mdi-timetable"/>Chamber</h3>
+                  <span class="section-hd__right" v-if="chamberCount">{{ `${chamberUsage}-${chamberCount}`}}</span>
+                </div>
+                <div class="section-bd">
+                  <chamber-list ref="chamberList" @getChamberCount="getChamberCount" />
+                </div>
+              </div>
+              <div class="section tp-list">
+                <div class="section-hd">
+                  <h3 class="section-hd__title"><i class="mdi mdi-layers-outline"/>TP List</h3>
+                </div>
+                <div class="section-bd">
+                  <tp-list ref="tpList" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </template>
+    
+    <script>
+      import initWS from "@utils/webSocket";
+      import MonitorHeader from "./components/monitor-header";
+      import LineMap from "./components/line-map"
+      import ChamberList from "./components/chamber-list";
+      import TpList from "@/views/monitor/components/tp-list";
+      export default {
+        name: "monitorA",
+        components: {TpList, ChamberList, MonitorHeader, LineMap},
+        data(){
+          return {
+            socket: null,
+            chamberUsage: 0,
+            chamberCount: 0
+          }
+        },
+        mounted(){
+          this.init()
+        },
+        methods: {
+          init(){
+            const self = this
+            self.$nextTick(_=>{
+              self.socket = initWS({
+                wsUrl: process.env.VUE_APP_WS_NO_LOGIN,
+                messageCallback: self.onMessage
+              })
+            })
+          },
+          getChamberCount(count) {
+            this.chamberUsage = count.chamberUsage
+            this.chamberCount = count.chamberCount
+          },
+          onMessage(data){
+            const self = this;
+            const actionCtrl = {
+              onpalletenter: self.onPalletEnter,
+              onpalletleave: self.onPalletLeave,
+              correctproductgroup: self.correctProductGroup,
+              correctpallet: self.correctPallet,
+              onstackermove: self.onStackerMove,
+              onstackertarget: self.onStackerTarget,
+            }
+            const actionKey = data.action ? data.action.toLowerCase() : '';
+            actionCtrl[actionKey] && actionCtrl[actionKey](data.result)
+          },
+          onPalletEnter(res){
+            console.log('onPalletEnter',res)
+            this.$refs['lineMap'].onPalletEnter(res)
+            this.$refs['chamberList'].onPalletEnter(res)
+            this.$refs['tpList'].onPalletEnter(res)
+          },
+          onPalletLeave(res){
+            console.log('onPalletLeave',res)
+            this.$refs['lineMap'].onPalletLeave(res)
+            this.$refs['chamberList'].onPalletLeave(res)
+            this.$refs['tpList'].onPalletLeave(res)
+          },
+          correctProductGroup(res){
+            console.log('correctProductGroup',res)
+            this.$refs['lineMap'].correctProductGroup(res)
+            this.$refs['chamberList'].correctProductGroup(res)
+            this.$refs['tpList'].correctProductGroup(res)
+    
+          },
+          correctPallet(res){
+            console.log('correctPallet',res)
+            this.$refs['lineMap'].correctPallet(res)
+            this.$refs['chamberList'].correctPallet(res)
+            this.$refs['tpList'].correctPallet(res)
+          },
+          onStackerMove(res){
+            this.$refs['chamberList'].onStackerMove(res)
+          },
+          onStackerTarget(res){
+            this.$refs['chamberList'].onStackerTarget(res)
+          }
+        }
+      }
+    </script>
+    
+   
 </body>
 
 </html>
