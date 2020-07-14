@@ -48,8 +48,6 @@
       import initWS from "@utils/webSocket";
       import MonitorHeader from "./components/monitor-header";
       import LineMap from "./components/line-map"
-      import ChamberList from "./components/chamber-list";
-      import TpList from "@/views/monitor/components/tp-list";
       export default {
         name: "monitorA",
         components: {TpList, ChamberList, MonitorHeader, LineMap},
@@ -77,19 +75,7 @@
             this.chamberUsage = count.chamberUsage
             this.chamberCount = count.chamberCount
           },
-          onMessage(data){
-            const self = this;
-            const actionCtrl = {
-              onpalletenter: self.onPalletEnter,
-              onpalletleave: self.onPalletLeave,
-              correctproductgroup: self.correctProductGroup,
-              correctpallet: self.correctPallet,
-              onstackermove: self.onStackerMove,
-              onstackertarget: self.onStackerTarget,
-            }
-            const actionKey = data.action ? data.action.toLowerCase() : '';
-            actionCtrl[actionKey] && actionCtrl[actionKey](data.result)
-          },
+          
           onPalletEnter(res){
             console.log('onPalletEnter',res)
             this.$refs['lineMap'].onPalletEnter(res)
@@ -102,25 +88,6 @@
             this.$refs['chamberList'].onPalletLeave(res)
             this.$refs['tpList'].onPalletLeave(res)
           },
-          correctProductGroup(res){
-            console.log('correctProductGroup',res)
-            this.$refs['lineMap'].correctProductGroup(res)
-            this.$refs['chamberList'].correctProductGroup(res)
-            this.$refs['tpList'].correctProductGroup(res)
-    
-          },
-          correctPallet(res){
-            console.log('correctPallet',res)
-            this.$refs['lineMap'].correctPallet(res)
-            this.$refs['chamberList'].correctPallet(res)
-            this.$refs['tpList'].correctPallet(res)
-          },
-          onStackerMove(res){
-            this.$refs['chamberList'].onStackerMove(res)
-          },
-          onStackerTarget(res){
-            this.$refs['chamberList'].onStackerTarget(res)
-          }
         }
       }
     </script>
