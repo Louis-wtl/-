@@ -21,17 +21,6 @@
               </div>
     
             </div>
-            <div class="row">
-              <div class="section chamber">
-                <div class="section-hd">
-                  <h3 class="section-hd__title"><i class="mdi mdi-timetable"/>Chamber</h3>
-                  <span class="section-hd__right" v-if="chamberCount">{{ `${chamberUsage}-${chamberCount}`}}</span>
-                </div>
-                <div class="section-bd">
-                  <chamber-list ref="chamberList" @getChamberCount="getChamberCount" />
-                </div>
-              </div>
-            </div>
           </div>
         </div>
     </template>
